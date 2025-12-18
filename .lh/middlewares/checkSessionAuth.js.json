@@ -1,0 +1,18 @@
+{
+    "sourceFile": "middlewares/checkSessionAuth.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1766092264818,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1766092264818,
+            "name": "Commit-0",
+            "content": "\r\nasync function checkSessionAuth(req, res, next) {\r\n  if (!req.session.user) {\r\n    req.flash(\"danger\", \"You need to login for this route\");\r\n    return res.redirect(\"/login\");\r\n  }\r\n  next();\r\n}\r\n\r\nmodule.exports = checkSessionAuth;\r\n"
+        }
+    ]
+}

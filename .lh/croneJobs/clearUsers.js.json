@@ -1,0 +1,22 @@
+{
+    "sourceFile": "croneJobs/clearUsers.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1765462197110,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1765462293303,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,33 @@\n+const User = require('../models/User');\r\n+var faker = require('faker');\r\n+var bcrypt = require('bcryptjs');\r\n+\r\n+async function clearUsers() {\r\n+  //there is not req argument\r\n+  console.log('Refreshing Users');\r\n+  let users = [];\r\n+  const salt = await bcrypt.genSalt(10);\r\n+  // const password = await bcrypt.hash(req.body.password, salt);\r\n+  //since there is no req argument in functin, it is using undefine password\r\n+  //if u turn corn on, it will give errors\r\n+\r\n+  //fix below\r\n+  const password = await bcrypt.hash('admin', salt);\r\n+  users.push({\r\n+    name: 'Usman Akram',\r\n+    email: 'admin@admin.com',\r\n+    password,\r\n+    roles: ['customer', 'admin'],\r\n+  });\r\n+\r\n+  await User.deleteMany({});\r\n+  User.collection.insertMany(users, (err, docs) => {\r\n+    if (err) {\r\n+      console.error('Error Occured: ' + err);\r\n+    } else {\r\n+      console.info('bulk inserted');\r\n+    }\r\n+  });\r\n+}\r\n+\r\n+module.exports = clearUsers;\r\n"
+                }
+            ],
+            "date": 1765462197110,
+            "name": "Commit-0",
+            "content": "const User = require(\"../models/User\");\r\nvar faker = require(\"faker\");\r\nvar bcrypt = require(\"bcryptjs\");\r\n\r\n\r\n\r\nasync function clearUsers() {\r\n  //there is not req argument\r\n  console.log(\"Refreshing Users\");\r\n  let users = [];\r\n  const salt = await bcrypt.genSalt(10);\r\n  const password = await bcrypt.hash(req.body.password, salt);\r\n  //since there is no req argument in functin, it is using undefine password\r\n  users.push({\r\n    name: \"Usman Akram\",\r\n    email: \"admin@admin.com\",\r\n    password,\r\n    roles: [\"customer\", \"admin\"],\r\n  });\r\n\r\n  await User.deleteMany({});\r\n  User.collection.insertMany(users, (err, docs) => {\r\n    if (err) {\r\n      console.error(\"Error Occured: \" + err);\r\n    } else {\r\n      console.info(\"bulk inserted\");\r\n    }\r\n  });\r\n}\r\n\r\nmodule.exports = clearUsers;\r\n"
+        }
+    ]
+}

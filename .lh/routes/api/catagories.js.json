@@ -1,0 +1,18 @@
+{
+    "sourceFile": "routes/api/catagories.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1766094073443,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1766094073443,
+            "name": "Commit-0",
+            "content": "var express = require(\"express\");\r\nvar router = express.Router();\r\nvar Category = require(\"../../models/Category\");\r\n\r\n// GET all\r\nrouter.get(\"/\", async function (req, res) {\r\n  let categories = await Category.find();\r\n  return res.send(categories);\r\n});\r\n\r\n// GET one\r\nrouter.get(\"/:id\", async function (req, res) {\r\n  try {\r\n    let category = await Category.findById(req.params.id);\r\n    if (!category) return res.status(404).send(\"Category not found\");\r\n    return res.send(category);\r\n  } catch (err) {\r\n    return res.status(400).send(\"Invalid Id\");\r\n  }\r\n});\r\n\r\n// UPDATE\r\nrouter.put(\"/:id\", async function (req, res) {\r\n  try {\r\n    let category = await Category.findById(req.params.id);\r\n    if (!category) return res.status(404).send(\"Category not found\");\r\n\r\n    category.name = req.body.name;\r\n    category.description = req.body.description;\r\n    category.slug = req.body.slug ?? category.slug;\r\n\r\n    await category.save();\r\n    return res.send(category);\r\n  } catch (err) {\r\n    return res.status(400).send(\"Invalid Id\");\r\n  }\r\n});\r\n\r\n// DELETE\r\nrouter.delete(\"/:id\", async function (req, res) {\r\n  try {\r\n    const deleted = await Category.findByIdAndDelete(req.params.id);\r\n    if (!deleted) return res.status(404).send(\"Category not found\");\r\n    return res.send(\"deleted\");\r\n  } catch (err) {\r\n    return res.status(400).send(\"Invalid Id\");\r\n  }\r\n});\r\n\r\nmodule.exports = router;\r\n"
+        }
+    ]
+}

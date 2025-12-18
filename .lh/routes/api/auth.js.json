@@ -1,0 +1,26 @@
+{
+    "sourceFile": "routes/api/auth.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1765399712515,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1765399726977,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,26 +4,57 @@\n const jwt = require('jsonwebtoken');\r\n const _ = require('lodash');\r\n const config = require('config');\r\n const bcrypt = require('bcryptjs');\r\n-router.post('/', async function (req, res, next) {\r\n-  let user = await User.findOne({\r\n-    email: req.body.email,\r\n-  });\r\n-  const validPassword = await bcrypt.compare(req.body.password, user.password);\r\n-  if (!validPassword) {\r\n-    return res.status(400).send('Invalid Password');\r\n+\r\n+\r\n+// router.post(\"/\", async function (req, res, next) {\r\n+//   let user = await User.findOne({\r\n+//     email: req.body.email,\r\n+//   });\r\n+//   const validPassword = await bcrypt.compare(req.body.password, user.password);\r\n+//   if (!validPassword) {\r\n+//     return res.status(400).send(\"Invalid Password\");\r\n+//   }\r\n+//   const token = jwt.sign(\r\n+//     {\r\n+//       _id: user._id,\r\n+//       roles: user.roles,\r\n+//       name: user.name,\r\n+//       email: user.email,\r\n+//     },\r\n+//     config.get(\"jwtPrivateKey\")\r\n+//   );\r\n+\r\n+//   return res.send(token);\r\n+// });\r\n+\r\n+router.post(\"/\", async function (req, res) {\r\n+  try {\r\n+    const user = await User.findOne({ email: req.body.email });\r\n+    if (!user) return res.status(400).send(\"Invalid Email or Password\");\r\n+\r\n+    const validPassword = await bcrypt.compare(\r\n+      req.body.password,\r\n+      user.password\r\n+    );\r\n+    if (!validPassword)\r\n+      return res.status(400).send(\"Invalid Email or Password\");\r\n+\r\n+    const token = jwt.sign(\r\n+      {\r\n+        _id: user._id,\r\n+        roles: user.roles,\r\n+        name: user.name,\r\n+        email: user.email,\r\n+      },\r\n+      config.get(\"jwtPrivateKey\")\r\n+    );\r\n+\r\n+    return res.send(token);\r\n+  } catch (err) {\r\n+    return res.status(500).send(\"Server error\");\r\n   }\r\n-  const token = jwt.sign(\r\n-    {\r\n-      _id: user._id,\r\n-      roles: user.roles,\r\n-      name: user.name,\r\n-      email: user.email,\r\n-    },\r\n-    config.get('jwtPrivateKey')\r\n-  );\r\n-\r\n-  return res.send(token);\r\n });\r\n \r\n+\r\n module.exports = router;\r\n"
+                },
+                {
+                    "date": 1765463534262,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,10 +26,16 @@\n \r\n //   return res.send(token);\r\n // });\r\n \r\n+//bug: if let user = await User.findOne({ email: req.body.email, }); gives null, then we r immediately use user.password in bcrypt.compare which gives error\r\n+//comparing its password (it is undefined) with req.body.password . we should give a error of \r\n+//innvalid email or password. \r\n+\r\n router.post('/', async function (req, res) {\r\n   try {\r\n+\r\n+\r\n     const user = await User.findOne({ email: req.body.email });\r\n     if (!user) return res.status(400).send('Invalid Email or Password');\r\n \r\n     const validPassword = await bcrypt.compare(\r\n"
+                }
+            ],
+            "date": 1765399712515,
+            "name": "Commit-0",
+            "content": "var express = require(\"express\");\r\nvar router = express.Router();\r\nvar User = require(\"../../models/User\");\r\nconst jwt = require(\"jsonwebtoken\");\r\nconst _ = require(\"lodash\");\r\nconst config = require(\"config\");\r\nconst bcrypt = require(\"bcryptjs\");\r\nrouter.post(\"/\", async function (req, res, next) {\r\n  let user = await User.findOne({\r\n    email: req.body.email,\r\n  });\r\n  const validPassword = await bcrypt.compare(req.body.password, user.password);\r\n  if (!validPassword) {\r\n    return res.status(400).send(\"Invalid Password\");\r\n  }\r\n  const token = jwt.sign(\r\n    {\r\n      _id: user._id,\r\n      roles: user.roles,\r\n      name: user.name,\r\n      email: user.email,\r\n    },\r\n    config.get(\"jwtPrivateKey\")\r\n  );\r\n\r\n  return res.send(token);\r\n});\r\n\r\nmodule.exports = router;\r\n"
+        }
+    ]
+}

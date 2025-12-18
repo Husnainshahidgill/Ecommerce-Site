@@ -1,0 +1,26 @@
+{
+    "sourceFile": "routes/api/products.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1765462824630,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1766079875901,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,5 +46,23 @@\n   } catch (err) {\r\n     return res.status(400).send('Invalid Id');\r\n   }\r\n });\r\n+\r\n+\r\n+// Product detail page (EJS)\r\n+router.get(\"/product/:id\", async function (req, res) {\r\n+  try {\r\n+    const product = await Product.findById(req.params.id);\r\n+    if (!product) return res.status(404).send(\"Product not found\");\r\n+\r\n+    return res.render(\"product-detail\", {\r\n+      pagetitle: product.name,\r\n+      product,\r\n+    });\r\n+  } catch (err) {\r\n+    return res.status(400).send(\"Invalid product id\");\r\n+  }\r\n+});\r\n+\r\n+\r\n module.exports = router;\r\n"
+                },
+                {
+                    "date": 1766080408812,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,20 +47,7 @@\n     return res.status(400).send('Invalid Id');\r\n   }\r\n });\r\n \r\n-// Product detail page (EJS)\r\n-router.get('/product/:id', async function (req, res) {\r\n-  try {\r\n-    const product = await Product.findById(req.params.id);\r\n-    if (!product) return res.status(404).send('Product not found');\r\n \r\n-    return res.render('product-detail', {\r\n-      pagetitle: product.name,\r\n-      product,\r\n-    });\r\n-  } catch (err) {\r\n-    return res.status(400).send('Invalid product id');\r\n-  }\r\n-});\r\n \r\n module.exports = router;\r\n"
+                }
+            ],
+            "date": 1765462824630,
+            "name": "Commit-0",
+            "content": "var express = require(\"express\");\r\nvar router = express.Router();\r\nvar Product = require(\"../../models/Product\");\r\nconst multer = require(\"multer\");\r\nconst storage = multer.diskStorage({\r\n  destination: (req, file, callBack) => {\r\n    \r\n    callBack(null, \"public/images/uploaded\"); //this folder was missing. so added it\r\n  },\r\n  filename: (req, file, callBack) => {\r\n    callBack(null, `${Date.now() + file.originalname.split(\" \").join(\"-\")}`);\r\n  },\r\n});\r\nlet upload = multer({ storage });\r\nrouter.get(\"/:id\", async function (req, res, next) {\r\n  let product = await Product.findById(req.params.id);\r\n  return res.send(product);\r\n});\r\nrouter.get(\"/\", async function (req, res, next) {\r\n  let products = await Product.find();\r\n\r\n  return res.send(products);\r\n});\r\nrouter.post(\"/\", upload.single(\"image\"), async function (req, res, next) {\r\n  let product = new Product(req.body);\r\n\r\n  if (req.file) product.image = req.file?.filename ? req.file.filename : \"\";\r\n\r\n  await product.save();\r\n  res.send(product);\r\n});\r\nrouter.put(\"/:id\", async function (req, res, next) {\r\n  let product = await Product.findById(req.params.id);\r\n  product.name = req.body.name;\r\n  product.price = req.body.price;\r\n  product.color = req.body.color;\r\n  product.description = req.body.description;\r\n  product.department = req.body.department;\r\n  await product.save();\r\n  return res.send(product);\r\n});\r\nrouter.delete(\"/:id\", async function (req, res, next) {\r\n  try {\r\n    let product = await Product.findById(req.params.id);\r\n    await product.delete();\r\n    return res.send(\"deleted\");\r\n  } catch (err) {\r\n    return res.status(400).send(\"Invalid Id\");\r\n  }\r\n});\r\nmodule.exports = router;\r\n"
+        }
+    ]
+}

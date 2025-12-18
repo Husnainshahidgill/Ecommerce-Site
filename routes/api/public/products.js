@@ -1,13 +1,10 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
-var Product = require("../../../models/Product");
+var Product = require('../../../models/Product');
 
-router.get("/", async function (req, res, next) {
-  console.log("inside");
-  setTimeout(async () => {
-    let products = await Product.find();
-
-    res.send(products);
-  }, 5000);
+router.get('/', async function (req, res) {
+  let products = await Product.find();
+  return res.send(products);
 });
+
 module.exports = router;

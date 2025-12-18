@@ -1,0 +1,26 @@
+{
+    "sourceFile": "routes/api/product-view.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1766080422838,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1766080552092,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,19 @@\n+var express = require('express');\r\n+var router = express.Router();\r\n+var Product = require('../../models/Product');\r\n+\r\n+router.get('/product/:id', async function (req, res) {\r\n+  try {\r\n+    const product = await Product.findById(req.params.id);\r\n+    if (!product) return res.status(404).send('Product not found');\r\n+\r\n+    return res.render('site/product-detail', {\r\n+      pagetitle: product.name,\r\n+      product,\r\n+    });\r\n+  } catch (err) {\r\n+    return res.status(400).send('Invalid product id');\r\n+  }\r\n+});\r\n+\r\n+module.exports = router;\r\n"
+                },
+                {
+                    "date": 1766092689693,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,16 +4,21 @@\n \r\n router.get('/product/:id', async function (req, res) {\r\n   try {\r\n     const product = await Product.findById(req.params.id);\r\n-    if (!product) return res.status(404).send('Product not found');\r\n+    if (!product) {\r\n+      req.flash('danger', 'Product not found');\r\n+      return res.redirect('/');\r\n+    }\r\n \r\n     return res.render('site/product-detail', {\r\n       pagetitle: product.name,\r\n       product,\r\n     });\r\n   } catch (err) {\r\n-    return res.status(400).send('Invalid product id');\r\n+    req.flash('danger', 'Invalid product id');\r\n+    return res.redirect('/');\r\n   }\r\n });\r\n \r\n+\r\n module.exports = router;\r\n"
+                }
+            ],
+            "date": 1766080422838,
+            "name": "Commit-0",
+            "content": "var express = require(\"express\");\r\nvar router = express.Router();\r\nvar Product = require(\"../models/Product\");\r\n\r\nrouter.get(\"/product/:id\", async function (req, res) {\r\n  try {\r\n    const product = await Product.findById(req.params.id);\r\n    if (!product) return res.status(404).send(\"Product not found\");\r\n\r\n    return res.render(\"site/product-detail\", {\r\n      pagetitle: product.name,\r\n      product,\r\n    });\r\n  } catch (err) {\r\n    return res.status(400).send(\"Invalid product id\");\r\n  }\r\n});\r\n\r\nmodule.exports = router;\r\n"
+        }
+    ]
+}

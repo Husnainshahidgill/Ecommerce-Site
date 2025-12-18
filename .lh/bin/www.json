@@ -1,0 +1,26 @@
+{
+    "sourceFile": "bin/www",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1766093458903,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1766093515729,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -31,9 +31,9 @@\n   .connect(connectionString, {\r\n     useUnifiedTopology: true,\r\n     useNewUrlParser: true,\r\n   })\r\n-  .then(() => console.log('Connected to ' + connectionString))\r\n+  .then(() => console.log(\"MongoDB connected\")\r\n   .catch((error) => console.log(error.message));\r\n \r\n server.listen(port);\r\n server.on('error', onError);\r\n"
+                },
+                {
+                    "date": 1766093564582,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -31,9 +31,9 @@\n   .connect(connectionString, {\r\n     useUnifiedTopology: true,\r\n     useNewUrlParser: true,\r\n   })\r\n-  .then(() => console.log(\"MongoDB connected\")\r\n+  .then(() => console.log((\"MongoDB connected\")))\r\n   .catch((error) => console.log(error.message));\r\n \r\n server.listen(port);\r\n server.on('error', onError);\r\n"
+                }
+            ],
+            "date": 1766093458903,
+            "name": "Commit-0",
+            "content": "#!/usr/bin/env node\r\n\r\n/**\r\n * Module dependencies.\r\n */\r\n\r\nvar app = require(\"../app\");\r\nvar debug = require(\"debug\")(\"sp19-bse-a-mern:server\");\r\nvar http = require(\"http\");\r\nvar config = require(\"config\");\r\n/**\r\n * Get port from environment and store in Express.\r\n */\r\n\r\nvar port = normalizePort(process.env.PORT || config.get(\"port\"));\r\napp.set(\"port\", port);\r\n\r\n/**\r\n * Create HTTP server.\r\n */\r\n\r\nvar server = http.createServer(app);\r\n\r\n/**\r\n * Listen on provided port, on all network interfaces.\r\n */\r\n\r\nconst mongoose = require(\"mongoose\");\r\nconst connectionString = config.get(\"db\");\r\nmongoose\r\n  .connect(connectionString, { useUnifiedTopology: true, useNewUrlParser: true})\r\n  .then(() => console.log(\"Connected to \" + connectionString))\r\n  .catch((error) => console.log(error.message));\r\n\r\n\r\n\r\n\r\nserver.listen(port);\r\nserver.on(\"error\", onError);\r\nserver.on(\"listening\", onListening);\r\n\r\n/**\r\n * Normalize a port into a number, string, or false.\r\n */\r\n\r\nfunction normalizePort(val) {\r\n  var port = parseInt(val, 10);\r\n\r\n  if (isNaN(port)) {\r\n    // named pipe\r\n    return val;\r\n  }\r\n\r\n  if (port >= 0) {\r\n    // port number\r\n    return port;\r\n  }\r\n\r\n  return false;\r\n}\r\n\r\n/**\r\n * Event listener for HTTP server \"error\" event.\r\n */\r\n\r\nfunction onError(error) {\r\n  if (error.syscall !== \"listen\") {\r\n    throw error;\r\n  }\r\n\r\n  var bind = typeof port === \"string\" ? \"Pipe \" + port : \"Port \" + port;\r\n\r\n  // handle specific listen errors with friendly messages\r\n  switch (error.code) {\r\n    case \"EACCES\":\r\n      console.error(bind + \" requires elevated privileges\");\r\n      process.exit(1);\r\n      break;\r\n    case \"EADDRINUSE\":\r\n      console.error(bind + \" is already in use\");\r\n      process.exit(1);\r\n      break;\r\n    default:\r\n      throw error;\r\n  }\r\n}\r\n\r\n/**\r\n * Event listener for HTTP server \"listening\" event.\r\n */\r\n\r\nfunction onListening() {\r\n  var addr = server.address();\r\n  var bind = typeof addr === \"string\" ? \"pipe \" + addr : \"port \" + addr.port;\r\n  debug(\"Listening on \" + bind);\r\n}\r\n\r\n"
+        }
+    ]
+}

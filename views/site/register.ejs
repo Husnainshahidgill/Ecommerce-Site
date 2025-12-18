@@ -1,36 +1,93 @@
-<div class="row">
-  <form action="" method="POST">
-    <div class="col-6 offset-3">
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input
-          type="text"
-          class="form-control"
-          name="name"
-          value="Usman Akram"
-        />
+<!-- register.ejs -->
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-5">
+      <div class="text-center mb-4">
+        <h1 class="h3 fw-bold mb-1">Create Your Account</h1>
+        <p class="text-muted mb-0">Join Awesome Shop in just a minute</p>
       </div>
-      <div class="form-group">
-        <label for="name">Email</label>
-        <input
-          type="text"
-          class="form-control"
-          name="email"
-          value="admin@admin.com"
-        />
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <!-- ✅ Same logic (POST to current route) -->
+          <form action="" method="POST">
+            <!-- Because the action attribute is empty (action=""), 
+             the browser tells the form to submit the data to the exact same URL you are currently on. -->
+            <!-- If you are viewing this page at http://localhost:3000/register,
+               the form will send the data back to http://localhost:3000/register -->
+            <div class="mb-3">
+              <label for="name" class="form-label fw-semibold">Name</label>
+              <input
+                id="name"
+                type="text"
+                class="form-control form-control-lg"
+                name="name"
+                value="Usman Akram"
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label fw-semibold">Email</label>
+              <input
+                id="email"
+                type="text"
+                class="form-control form-control-lg"
+                name="email"
+                value="admin@admin.com"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+
+            <div class="mb-2">
+              <label for="password" class="form-label fw-semibold"
+                >Password</label
+              >
+              <input
+                id="password"
+                type="password"
+                class="form-control form-control-lg"
+                name="password"
+                value="admin"
+                placeholder="Create a strong password"
+                required
+              />
+            </div>
+
+            <div class="form-check my-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="terms"
+                required
+              />
+              <label class="form-check-label small text-muted" for="terms">
+                I agree to the
+                <a href="/terms" class="text-decoration-none">Terms</a> and
+                <a href="/privacy" class="text-decoration-none"
+                  >Privacy Policy</a
+                >
+              </label>
+            </div>
+
+            <div class="d-grid">
+              <button class="btn btn-info btn-lg fw-bold" type="submit">
+                Register
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="name">Password</label>
-        <input
-          type="password"
-          class="form-control"
-          name="password"
-          value="admin"
-        />
-      </div>
-      <div class="form-group">
-        <button class="btn btn-info" type="submit">Register</button>
+
+      <div class="text-center mt-3">
+        <span class="text-muted small">Already have an account?</span>
+        <a href="/login" class="small text-decoration-none fw-semibold ms-1">
+          Login
+        </a>
       </div>
     </div>
-  </form>
+  </div>
 </div>

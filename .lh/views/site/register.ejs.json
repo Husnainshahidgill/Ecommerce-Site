@@ -1,0 +1,22 @@
+{
+    "sourceFile": "views/site/register.ejs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1765397957926,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1765444796534,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,8 +11,12 @@\n       <div class=\"card border-0 shadow-sm\">\r\n         <div class=\"card-body p-4 p-md-5\">\r\n           <!-- ✅ Same logic (POST to current route) -->\r\n           <form action=\"\" method=\"POST\">\r\n+            <!-- Because the action attribute is empty (action=\"\"), \r\n+             the browser tells the form to submit the data to the exact same URL you are currently on. -->\r\n+             <!-- If you are viewing this page at http://localhost:3000/register,\r\n+               the form will send the data back to http://localhost:3000/register -->\r\n             <div class=\"mb-3\">\r\n               <label for=\"name\" class=\"form-label fw-semibold\">Name</label>\r\n               <input\r\n                 id=\"name\"\r\n"
+                }
+            ],
+            "date": 1765397957926,
+            "name": "Commit-0",
+            "content": "<!-- register.ejs -->\r\n\r\n<div class=\"container py-5\">\r\n  <div class=\"row justify-content-center\">\r\n\r\n    <div class=\"col-12 col-md-8 col-lg-5\">\r\n\r\n      <div class=\"text-center mb-4\">\r\n        <h1 class=\"h3 fw-bold mb-1\">Create Your Account</h1>\r\n        <p class=\"text-muted mb-0\">Join Awesome Shop in just a minute</p>\r\n      </div>\r\n\r\n      <div class=\"card border-0 shadow-sm\">\r\n        <div class=\"card-body p-4 p-md-5\">\r\n\r\n          <!-- ✅ Same logic (POST to current route) -->\r\n          <form action=\"\" method=\"POST\">\r\n\r\n            <div class=\"mb-3\">\r\n              <label for=\"name\" class=\"form-label fw-semibold\">Name</label>\r\n              <input\r\n                id=\"name\"\r\n                type=\"text\"\r\n                class=\"form-control form-control-lg\"\r\n                name=\"name\"\r\n                value=\"Usman Akram\"\r\n                placeholder=\"Enter your full name\"\r\n                required\r\n              />\r\n            </div>\r\n\r\n            <div class=\"mb-3\">\r\n              <label for=\"email\" class=\"form-label fw-semibold\">Email</label>\r\n              <input\r\n                id=\"email\"\r\n                type=\"text\"\r\n                class=\"form-control form-control-lg\"\r\n                name=\"email\"\r\n                value=\"admin@admin.com\"\r\n                placeholder=\"Enter your email\"\r\n                required\r\n              />\r\n            </div>\r\n\r\n            <div class=\"mb-2\">\r\n              <label for=\"password\" class=\"form-label fw-semibold\">Password</label>\r\n              <input\r\n                id=\"password\"\r\n                type=\"password\"\r\n                class=\"form-control form-control-lg\"\r\n                name=\"password\"\r\n                value=\"admin\"\r\n                placeholder=\"Create a strong password\"\r\n                required\r\n              />\r\n            </div>\r\n\r\n            <div class=\"form-check my-3\">\r\n              <input class=\"form-check-input\" type=\"checkbox\" id=\"terms\" required>\r\n              <label class=\"form-check-label small text-muted\" for=\"terms\">\r\n                I agree to the <a href=\"/terms\" class=\"text-decoration-none\">Terms</a> and\r\n                <a href=\"/privacy\" class=\"text-decoration-none\">Privacy Policy</a>\r\n              </label>\r\n            </div>\r\n\r\n            <div class=\"d-grid\">\r\n              <button class=\"btn btn-info btn-lg fw-bold\" type=\"submit\">\r\n                Register\r\n              </button>\r\n            </div>\r\n\r\n          </form>\r\n\r\n        </div>\r\n      </div>\r\n\r\n      <div class=\"text-center mt-3\">\r\n        <span class=\"text-muted small\">Already have an account?</span>\r\n        <a href=\"/login\" class=\"small text-decoration-none fw-semibold ms-1\">\r\n          Login\r\n        </a>\r\n      </div>\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+        }
+    ]
+}

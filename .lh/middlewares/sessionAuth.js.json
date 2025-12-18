@@ -1,0 +1,30 @@
+{
+    "sourceFile": "middlewares/sessionAuth.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1765398984023,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1765442008627,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,12 +9,12 @@\n   // ✅ safe roles array\r\n   const roles = req.session.user?.roles || [];\r\n \r\n   // ✅ superadmin flag\r\n-  res.locals.isSuperAdmin = roles.includes(\"superadmin\");\r\n+  res.locals.isSuperAdmin = roles.includes('superadmin');\r\n \r\n   // ✅ admin flag should include superadmin too\r\n-  res.locals.isAdmin = roles.includes(\"admin\") || res.locals.isSuperAdmin;\r\n+  res.locals.isAdmin = roles.includes('admin') || res.locals.isSuperAdmin;\r\n \r\n   // flash helper\r\n   req.flash = function (type, message) {\r\n     req.session.flash = { type, message };\r\n"
+                },
+                {
+                    "date": 1765445978457,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,16 @@\n // sessionAuth.js\r\n+// Think of it as a \"Butler\" that runs before every single page load.\r\n+//  Its job is to check who the user is, what powers (roles) they have, \r\n+// and if there are any messages (like \"Login Successful\") waiting to be shown. \r\n+// It then unpacks all this info so your HTML/EJS files can use it easily.\r\n \r\n async function sessionAuth(req, res, next) {\r\n   // normalize session user\r\n   if (!req.session.user) req.session.user = null;\r\n \r\n   res.locals.user = req.session.user;\r\n+  \r\n \r\n   // ✅ safe roles array\r\n   const roles = req.session.user?.roles || [];\r\n \r\n"
+                },
+                {
+                    "date": 1765447329305,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,11 +16,14 @@\n   // ✅ superadmin flag\r\n   res.locals.isSuperAdmin = roles.includes('superadmin');\r\n \r\n   // ✅ admin flag should include superadmin too\r\n+  // This establishes a hierarchy: If you are a Super Admin, the system automatically\r\n+  //  treats you as an Admin too.\r\n   res.locals.isAdmin = roles.includes('admin') || res.locals.isSuperAdmin;\r\n \r\n   // flash helper\r\n+  // this to solve http amnresia\r\n   req.flash = function (type, message) {\r\n     req.session.flash = { type, message };\r\n   };\r\n \r\n"
+                }
+            ],
+            "date": 1765398984023,
+            "name": "Commit-0",
+            "content": "// sessionAuth.js\r\n\r\nasync function sessionAuth(req, res, next) {\r\n  // normalize session user\r\n  if (!req.session.user) req.session.user = null;\r\n\r\n  res.locals.user = req.session.user;\r\n\r\n  // ✅ safe roles array\r\n  const roles = req.session.user?.roles || [];\r\n\r\n  // ✅ superadmin flag\r\n  res.locals.isSuperAdmin = roles.includes(\"superadmin\");\r\n\r\n  // ✅ admin flag should include superadmin too\r\n  res.locals.isAdmin = roles.includes(\"admin\") || res.locals.isSuperAdmin;\r\n\r\n  // flash helper\r\n  req.flash = function (type, message) {\r\n    req.session.flash = { type, message };\r\n  };\r\n\r\n  if (req.session.flash) {\r\n    res.locals.flash = req.session.flash;\r\n    req.session.flash = null;\r\n  }\r\n\r\n  next();\r\n}\r\n\r\nmodule.exports = sessionAuth;\r\n"
+        }
+    ]
+}

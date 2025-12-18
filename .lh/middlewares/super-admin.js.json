@@ -1,0 +1,26 @@
+{
+    "sourceFile": "middlewares/super-admin.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1765466835016,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1765466843840,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,5 +11,10 @@\n   res.locals.title = 'Awesome Store Admin Panel';\r\n \r\n   const user = req.session.user || null;\r\n   const roles = (user && user.roles) || [];\r\n+\r\n+  if (!user) {\r\n+    // no req.flash here because sessionAuth hasn't run yet\r\n+    return res.redirect('/login');\r\n+  }\r\n };\r\n"
+                },
+                {
+                    "date": 1765466857879,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,27 @@\n+// module.exports = async function (req, res, next) {\r\n+//   res.locals.layout = \"super-admin-layout\";\r\n+//   res.locals.title = \"Awesome Store Admin Panel\";\r\n+//   next();\r\n+// };\r\n+\r\n+//bug: anyone can get to the superadmin dashboard because it is exposed to public. no checking of roles\r\n+\r\n+module.exports = async function (req, res, next) {\r\n+  res.locals.layout = 'super-admin-layout';\r\n+  res.locals.title = 'Awesome Store Admin Panel';\r\n+\r\n+  const user = req.session.user || null;\r\n+  const roles = (user && user.roles) || [];\r\n+\r\n+  if (!user) {\r\n+    // no req.flash here because sessionAuth hasn't run yet\r\n+    return res.redirect('/login');\r\n+  }\r\n+\r\n+  // 2) logged in but not admin / superadmin → block\r\n+  const isAdmin = roles.includes('admin') || roles.includes('superadmin');\r\n+  if (!isAdmin) {\r\n+    // you can also redirect to \"/\" if you prefer\r\n+    return res.status(403).send('Access denied. Admins only.');\r\n+  }\r\n+};\r\n"
+                }
+            ],
+            "date": 1765466835016,
+            "name": "Commit-0",
+            "content": "// module.exports = async function (req, res, next) {\r\n//   res.locals.layout = \"super-admin-layout\";\r\n//   res.locals.title = \"Awesome Store Admin Panel\";\r\n//   next();\r\n// };\r\n\r\n\r\n//bug: anyone can get to the superadmin dashboard because it is exposed to public. no checking of roles\r\n\r\n\r\nmodule.exports = async function (req, res, next) {\r\n  res.locals.layout = \"super-admin-layout\";\r\n  res.locals.title = \"Awesome Store Admin Panel\";\r\n\r\n\r\n  const user = req.session.user || null;\r\n  const roles = (user && user.roles) || [];\r\n\r\n  \r\n}\r\n\r\n"
+        }
+    ]
+}

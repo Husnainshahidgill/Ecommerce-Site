@@ -1,0 +1,22 @@
+{
+    "sourceFile": "middlewares/apiauth.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1766092734915,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1766092746788,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,22 +1,22 @@\n-const jwt = require('jsonwebtoken');\r\n-const config = require('config');\r\n-const User = require('../models/User');\r\n+const jwt = require(\"jsonwebtoken\");\r\n+const config = require(\"config\");\r\n+const User = require(\"../models/User\");\r\n \r\n async function apiauth(req, res, next) {\r\n-  const token = req.header('x-auth-token');\r\n-  if (!token) return res.status(401).send('Access denied. No token provided.');\r\n+  const token = req.header(\"x-auth-token\");\r\n+  if (!token) return res.status(401).send(\"Access denied. No token provided.\");\r\n \r\n   try {\r\n-    const decoded = jwt.verify(token, config.get('jwtPrivateKey'));\r\n-    const user = await User.findById(decoded._id).select('-password');\r\n+    const decoded = jwt.verify(token, config.get(\"jwtPrivateKey\"));\r\n+    const user = await User.findById(decoded._id).select(\"-password\");\r\n \r\n-    if (!user) return res.status(401).send('Invalid token.');\r\n+    if (!user) return res.status(401).send(\"Invalid token.\");\r\n \r\n     req.user = user;\r\n     next();\r\n   } catch (err) {\r\n-    return res.status(401).send('Invalid or expired token.');\r\n+    return res.status(401).send(\"Invalid or expired token.\");\r\n   }\r\n }\r\n \r\n module.exports = apiauth;\r\n"
+                }
+            ],
+            "date": 1766092734915,
+            "name": "Commit-0",
+            "content": "const jwt = require(\"jsonwebtoken\");\r\nconst config = require(\"config\");\r\nconst User = require(\"../models/User\");\r\n\r\nasync function apiauth(req, res, next) {\r\n  const token = req.header(\"x-auth-token\");\r\n  if (!token) return res.status(401).send(\"Access denied. No token provided.\");\r\n\r\n  try {\r\n    const decoded = jwt.verify(token, config.get(\"jwtPrivateKey\"));\r\n    const user = await User.findById(decoded._id).select(\"-password\");\r\n\r\n    if (!user) return res.status(401).send(\"Invalid token.\");\r\n\r\n    req.user = user;\r\n    next();\r\n  } catch (err) {\r\n    return res.status(401).send(\"Invalid or expired token.\");\r\n  }\r\n}\r\n\r\nmodule.exports = apiauth;\r\n"
+        }
+    ]
+}

@@ -1,24 +1,129 @@
-<a href="/" class="btn btn-info">Continue Shopping</a>
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Product Name</th>
-            <th>Product Price</th>
-        </tr>
+<!-- cart.ejs -->
 
-    </thead>
-    <tbody>
-        <% for(var i=0;i<products.length;i++) {let product = products[i];%>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 mt-3">
+  <div>
+    <h1 class="h3 fw-bold mb-1">Your Cart</h1>
+    <p class="text-muted mb-0">Review your items before checkout.</p>
+  </div>
+
+  <div class="d-flex gap-2">
+    <a href="/" class="btn btn-outline-primary">← Continue Shopping</a>
+    <a href="/checkout" class="btn btn-primary">Proceed to Checkout</a>
+  </div>
+</div>
+
+<%
+  const cartItems = (typeof items !== 'undefined' && Array.isArray(items)) ? items : [];
+  const money = (n) => Number(n || 0).toFixed(2);
+%>
+
+<% if (!cartItems || cartItems.length === 0) { %>
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4 p-md-5 text-center">
+      <div class="display-6 mb-2">🛒</div>
+      <h2 class="h5 fw-semibold">Your cart is empty</h2>
+      <p class="text-muted mb-4">Looks like you haven’t added anything yet.</p>
+      <a href="/" class="btn btn-primary px-4">Start Shopping</a>
+    </div>
+  </div>
+<% } else { %>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
             <tr>
-                <td><%=product.name  %> </td>
-                <td><%=product.price  %> </td>
+              <th class="ps-4">Product</th>
+              <th class="text-center">Qty</th>
+              <th class="text-end">Unit Price</th>
+              <th class="text-end">Line Total</th>
+              <th class="text-end pe-4">Actions</th>
             </tr>
-            <% } %> 
-            <tfoot>
-                <tr>
-                    <td>Total:</td>
-                    <td><%=total  %> </td>
-                </tr>
-            </tfoot>
-    </tbody>
-</table>
+          </thead>
+
+          <tbody>
+            <% for (var i = 0; i < cartItems.length; i++) {
+                 let it = cartItems[i];
+                 let product = it.product;
+                 let qty = Number(it.qty || 1);
+                 let unit = Number(it.unitPrice || (product && product.price ? product.price : 0));
+                 let line = Number(it.lineTotal || (unit * qty));
+                 let available = (product && product.quantity != null) ? Number(product.quantity) : 0;
+            %>
+              <tr>
+                <td class="ps-4">
+                  <div class="fw-semibold"><%= product ? product.name : 'Unknown Product' %></div>
+                  <div class="text-muted small">
+                    <% if (product && product.department) { %><%= product.department %><% } %>
+                    <% if (product && product.color) { %> • <%= product.color %><% } %>
+                    <% if (product) { %> • Stock: <%= available %><% } %>
+                  </div>
+                </td>
+
+                <td class="text-center" style="min-width: 180px;">
+                  <% if (product) { %>
+                    <form method="POST" action="/cart/update/<%= product._id %>" class="d-flex justify-content-center gap-2">
+                      <input
+                        type="number"
+                        name="qty"
+                        class="form-control form-control-sm"
+                        style="max-width: 90px;"
+                        min="1"
+                        max="<%= available > 0 ? available : 1 %>"
+                        value="<%= qty %>"
+                        required
+                      />
+                      <button class="btn btn-sm btn-outline-dark">Update</button>
+                    </form>
+                  <% } else { %>
+                    <span class="text-muted small">Item unavailable</span>
+                  <% } %>
+                </td>
+
+                <td class="text-end">$<%= money(unit) %></td>
+
+                <td class="text-end fw-semibold">$<%= money(line) %></td>
+
+                <td class="text-end pe-4">
+                  <% if (product) { %>
+                    <form method="POST" action="/cart/remove/<%= product._id %>" class="d-inline">
+                      <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Remove this item?')">
+                        Remove
+                      </button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+
+          <tfoot class="table-light">
+            <tr>
+              <td class="ps-4" colspan="3">
+                <span class="fw-semibold">Total</span>
+              </td>
+              <td class="text-end">
+                <span class="fw-bold fs-5">$<%= money(total) %></span>
+              </td>
+              <td class="pe-4"></td>
+            </tr>
+          </tfoot>
+
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mt-3">
+    <small class="text-muted">
+      Prices shown are before delivery/taxes (if applicable).
+    </small>
+
+    <div class="d-flex gap-2">
+      <a href="/" class="btn btn-outline-primary">← Continue Shopping</a>
+      <a href="/checkout" class="btn btn-primary">Proceed to Checkout</a>
+    </div>
+  </div>
+
+<% } %>

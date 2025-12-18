@@ -1,0 +1,26 @@
+{
+    "sourceFile": "models/Product.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1766084992426,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1766085005366,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,12 @@\n+const mongoose = require('mongoose');\r\n+const productSchema = mongoose.Schema({\r\n+  name: String,\r\n+  price: String,\r\n+  color: String,\r\n+  department: String,\r\n+  description: String,\r\n+  image: String,\r\n+  quantity: { type: Number, default: 0 },\r\n+});\r\n+const Product = mongoose.model('Product', productSchema);\r\n+module.exports = Product;\r\n"
+                },
+                {
+                    "date": 1766093077901,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,8 @@\n const mongoose = require('mongoose');\r\n const productSchema = mongoose.Schema({\r\n   name: String,\r\n-  price: String,\r\n+  price: { type: Number, required: true, min: 0 },\r\n   color: String,\r\n   department: String,\r\n   description: String,\r\n   image: String,\r\n"
+                }
+            ],
+            "date": 1766084992426,
+            "name": "Commit-0",
+            "content": "const mongoose = require(\"mongoose\");\r\nconst productSchema = mongoose.Schema({\r\n  name: String,\r\n  price: String,\r\n  color: String,\r\n  department: String,\r\n  description: String,\r\n  image: String,\r\n  quantity: { type: Number, default: 0 },\r\n});\r\nconst Product = mongoose.model(\"Product\", productSchema);\r\nmodule.exports = Product;\r\n"
+        }
+    ]
+}

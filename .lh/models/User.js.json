@@ -1,0 +1,26 @@
+{
+    "sourceFile": "models/User.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1765441714128,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1766093021005,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,17 +1,12 @@\n const mongoose = require('mongoose');\r\n const userSchema = mongoose.Schema({\r\n   name: String,\r\n-  email: String,\r\n+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },\r\n   password: String,\r\n   roles: [String],\r\n });\r\n const User = mongoose.models.User || mongoose.model('User', userSchema);\r\n module.exports = User;\r\n \r\n \r\n \r\n-// Normal user → [\"customer\"]\r\n-\r\n-// Admin → [\"admin\", \"customer\"]\r\n-\r\n-// Superadmin → [\"superadmin\", \"admin\", \"customer\"] (if you want)\r\n"
+                },
+                {
+                    "date": 1766093031991,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,15 @@\n+const mongoose = require('mongoose');\r\n+const userSchema = mongoose.Schema({\r\n+  name: String,\r\n+  email: {\r\n+    type: String,\r\n+    required: true,\r\n+    unique: true,\r\n+    lowercase: true,\r\n+    trim: true,\r\n+  },\r\n+  ppassword: { type: String, required: true },\r\n+  roles: [String],\r\n+});\r\n+const User = mongoose.models.User || mongoose.model('User', userSchema);\r\n+module.exports = User;\r\n"
+                }
+            ],
+            "date": 1765441714128,
+            "name": "Commit-0",
+            "content": "const mongoose = require(\"mongoose\");\r\nconst userSchema = mongoose.Schema({\r\n  name: String,\r\n  email: String,\r\n  password: String,\r\n  roles: [String],\r\n});\r\nconst User = mongoose.models.User || mongoose.model(\"User\", userSchema);\r\nmodule.exports = User;\r\n\r\n\r\n// Normal user → [\"customer\"]\r\n\r\n// Admin → [\"admin\", \"customer\"]\r\n\r\n// Superadmin → [\"superadmin\", \"admin\", \"customer\"] (if you want)"
+        }
+    ]
+}

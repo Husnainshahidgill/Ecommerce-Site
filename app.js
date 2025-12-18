@@ -1,66 +1,82 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var expressLayouts = require("express-ejs-layouts");
-var indexRouter = require("./routes/index");
-var protectedRouter = require("./routes/protected");
-var sessionAuth = require("./middlewares/sessionAuth");
-var superAdminMiddleware = require("./middlewares/super-admin");
-var checkSessionAuth = require("./middlewares/checkSessionAuth");
-var apiauth = require("./middlewares/apiauth");
-var session = require("express-session");
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+var expressLayouts = require('express-ejs-layouts');
+
+var indexRouter = require('./routes/index');
+var protectedRouter = require('./routes/protected');
+
+var sessionAuth = require('./middlewares/sessionAuth');
+var superAdminMiddleware = require('./middlewares/super-admin');
+var checkSessionAuth = require('./middlewares/checkSessionAuth');
+var apiauth = require('./middlewares/apiauth');
+
+var session = require('express-session');
+var config = require('config');
+
 var app = express();
 
-var bodyParser = require("body-parser");
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+app.use(expressLayouts);
 
-app.use(bodyParser.json());
-// for parsing application/xwww-
-app.use(bodyParser.urlencoded({ extended: true }));
-var config = require("config");
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// session
 app.use(
   session({
-    secret: config.get("sessionSecret"),
-    cookie: { maxAge: 60000 },
-    resave: true,
-    saveUninitialized: true,
+    secret: config.get('sessionSecret'),
+    cookie: { maxAge: 360000000 }, // ~100 hours (adjust if needed)
+    resave: false,
+    saveUninitialized: false,
   })
 );
-// const { startCronJobs } = require("./croneJobs/index");
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
-app.use(expressLayouts);
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+
+// public assets
+app.use(express.static(path.join(__dirname, 'public')));
+
+// super-admin routes
 app.use(
-  "/super-admin",
+  '/super-admin',
   superAdminMiddleware,
-  require("./routes/super-admin/dashbosrd")
+  require('./routes/super-admin/dashbosrd')
 );
 app.use(
-  "/super-admin",
+  '/super-admin',
   superAdminMiddleware,
-  require("./routes/super-admin/products")
+  require('./routes/super-admin/products')
 );
-app.use("/api/public/products", require("./routes/api/public/products"));
-app.use("/api/categories", require("./routes/api/catagories"));
-app.use("/api/products", apiauth, require("./routes/api/products"));
-app.use("/api/auth", require("./routes/api/auth"));
-app.use("/", sessionAuth, indexRouter);
-app.use("/my-account", sessionAuth, checkSessionAuth, protectedRouter);
-app.use("/", sessionAuth, require("./routes/shop"));
-app.get("/admin", async (req, res) => {
-  res.sendFile(path.join(__dirname, "admin", "build", "index.html"));
+
+// API routes
+app.use('/api/public/products', require('./routes/api/public/products'));
+app.use('/api/categories', apiauth, require('./routes/api/catagories'));
+
+app.use('/api/products', apiauth, require('./routes/api/products'));
+app.use('/api/auth', require('./routes/api/auth'));
+
+// site routes
+app.use('/', sessionAuth, indexRouter);
+app.use('/my-account', sessionAuth, checkSessionAuth, protectedRouter);
+app.use('/', sessionAuth, require('./routes/shop'));
+app.use('/', sessionAuth, require('./routes/api/product-view')); // newly added
+
+// admin (React build)
+// IMPORTANT: mount at /admin so /admin/static/... works correctly
+app.use('/admin', express.static(path.join(__dirname, 'admin', 'build')));
+
+// SPA fallback for admin routes (React Router)
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'build', 'index.html'));
 });
-app.get("/admin/*", async (req, res) => {
-  res.sendFile(path.join(__dirname, "admin", "build", "index.html"));
+app.get('/admin/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'build', 'index.html'));
 });
-app.use(express.static(path.join(__dirname, "admin", "build")));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -69,13 +85,10 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
-  res.render("error");
+  res.render('error');
 });
-// startCronJobs();
+
 module.exports = app;

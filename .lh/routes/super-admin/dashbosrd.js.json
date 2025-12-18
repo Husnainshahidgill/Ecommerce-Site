@@ -1,0 +1,38 @@
+{
+    "sourceFile": "routes/super-admin/dashbosrd.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 5,
+            "patches": [
+                {
+                    "date": 1766086859134,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1766087090487,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,26 @@\n+const express = require('express');\r\n+let router = express.Router();\r\n+const Product = require('../../models/Product');\r\n+const User = require('../../models/User');\r\n+\r\n+router.get('/', async (req, res) => {\r\n+  try {\r\n+    const [totalProducts, totalCustomers] = await Promise.all([\r\n+      Product.countDocuments(),\r\n+      User.countDocuments({ roles: { $in: ['customer'] } }), // ✅ only customers\r\n+    ]);\r\n+\r\n+    return res.render('super-admin/dashboard', {\r\n+      totalProducts,\r\n+      totalCustomers,\r\n+    });\r\n+  } catch (err) {\r\n+    console.error('Dashboard error:', err);\r\n+    return res.render('super-admin/dashboard', {\r\n+      totalProducts: 0,\r\n+      totalCustomers: 0,\r\n+    });\r\n+  }\r\n+});\r\n+\r\n+module.exports = router;\r\n"
+                },
+                {
+                    "date": 1766087273314,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,9 +6,12 @@\n router.get('/', async (req, res) => {\r\n   try {\r\n     const [totalProducts, totalCustomers] = await Promise.all([\r\n       Product.countDocuments(),\r\n-      User.countDocuments({ roles: { $in: ['customer'] } }), // ✅ only customers\r\n+      User.countDocuments({\r\n+        roles: 'customer', // must have customer\r\n+        roles: { $nin: ['admin', 'super-admin'] }, // and must NOT have these\r\n+      }),\r\n     ]);\r\n \r\n     return res.render('super-admin/dashboard', {\r\n       totalProducts,\r\n@@ -23,19 +26,4 @@\n   }\r\n });\r\n \r\n module.exports = router;\r\n-const express = require(\"express\");\r\n-let router = express.Router();\r\n-const Product = require(\"../../models/Product\");\r\n-\r\n-router.get(\"/\", async (req, res) => {\r\n-  try {\r\n-    const totalProducts = await Product.countDocuments();\r\n-    return res.render(\"super-admin/dashboard\", { totalProducts });\r\n-  } catch (err) {\r\n-    console.error(\"Dashboard error:\", err);\r\n-    return res.render(\"super-admin/dashboard\", { totalProducts: 0 });\r\n-  }\r\n-});\r\n-\r\n-module.exports = router;\r\n"
+                },
+                {
+                    "date": 1766088058201,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,33 @@\n+const express = require('express');\r\n+let router = express.Router();\r\n+const Product = require('../../models/Product');\r\n+const User = require('../../models/User');\r\n+const Order = require('../../models/Order');\r\n+\r\n+router.get('/', async (req, res) => {\r\n+  try {\r\n+    const [totalProducts, totalCustomers, totalOrders] = await Promise.all([\r\n+      Product.countDocuments(),\r\n+      User.countDocuments({\r\n+        roles: 'customer', // must have customer\r\n+        roles: { $nin: ['admin', 'super-admin'] }, // and must NOT have these\r\n+      }),\r\n+      Order.countDocuments(),\r\n+    ]);\r\n+\r\n+    return res.render('super-admin/dashboard', {\r\n+      totalProducts,\r\n+      totalCustomers,\r\n+      totalOrders,\r\n+    });\r\n+  } catch (err) {\r\n+    console.error('Dashboard error:', err);\r\n+    return res.render('super-admin/dashboard', {\r\n+      totalProducts: 0,\r\n+      totalCustomers: 0,\r\n+      totalOrders: 0,\r\n+    });\r\n+  }\r\n+});\r\n+\r\n+module.exports = router;\r\n"
+                },
+                {
+                    "date": 1766093176889,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,10 +8,10 @@\n   try {\r\n     const [totalProducts, totalCustomers, totalOrders] = await Promise.all([\r\n       Product.countDocuments(),\r\n       User.countDocuments({\r\n-        roles: 'customer', // must have customer\r\n-        roles: { $nin: ['admin', 'super-admin'] }, // and must NOT have these\r\n+        roles: 'customer', \r\n+        roles: { $nin: ['admin', 'super-admin'] }, \r\n       }),\r\n       Order.countDocuments(),\r\n     ]);\r\n \r\n"
+                },
+                {
+                    "date": 1766093184128,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,33 @@\n+const express = require('express');\r\n+let router = express.Router();\r\n+const Product = require('../../models/Product');\r\n+const User = require('../../models/User');\r\n+const Order = require('../../models/Order');\r\n+\r\n+router.get('/', async (req, res) => {\r\n+  try {\r\n+    const [totalProducts, totalCustomers, totalOrders] = await Promise.all([\r\n+      Product.countDocuments(),\r\n+      User.countDocuments({\r\n+        roles: 'customer',\r\n+        roles: { $nin: ['admin', 'super-admin'] },\r\n+      }),\r\n+      Order.countDocuments(),\r\n+    ]);\r\n+\r\n+    return res.render('super-admin/dashboard', {\r\n+      totalProducts,\r\n+      totalCustomers,\r\n+      totalOrders,\r\n+    });\r\n+  } catch (err) {\r\n+    console.error('Dashboard error:', err);\r\n+    return res.render('super-admin/dashboard', {\r\n+      totalProducts: 0,\r\n+      totalCustomers: 0,\r\n+      totalOrders: 0,\r\n+    });\r\n+  }\r\n+});\r\n+\r\n+module.exports = router;\r\n"
+                }
+            ],
+            "date": 1766086859134,
+            "name": "Commit-0",
+            "content": "const express = require(\"express\");\r\nlet router = express.Router();\r\nconst Product = require(\"../../models/Product\");\r\n\r\nrouter.get(\"/\", async (req, res) => {\r\n  try {\r\n    const totalProducts = await Product.countDocuments();\r\n    return res.render(\"super-admin/dashboard\", { totalProducts });\r\n  } catch (err) {\r\n    console.error(\"Dashboard error:\", err);\r\n    return res.render(\"super-admin/dashboard\", { totalProducts: 0 });\r\n  }\r\n});\r\n\r\nmodule.exports = router;\r\n"
+        }
+    ]
+}
