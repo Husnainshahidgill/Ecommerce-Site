@@ -209,53 +209,58 @@ router.get('/checkout', checkCartNotEmpty, async function (req, res) {
 
 router.post('/checkout', checkCartNotEmpty, async function (req, res) {
   try {
-    // 1. Get Customer details from the form (Lab Requirement)
     const { customerName, customerEmail } = req.body;
 
-    if (!customerName || !customerEmail) {
-      req.flash('danger', 'Please provide your name and email.');
+    if (!customerName || customerName.trim().length < 3) {
+      req.flash(
+        'danger',
+        'Please provide a valid full name (min 3 characters).'
+      );
       return res.redirect('/checkout');
     }
 
-    // 2. Get Cart from Cookies
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!customerEmail || !emailRegex.test(customerEmail)) {
+      req.flash('danger', 'Please provide a valid email address.');
+      return res.redirect('/checkout');
+    }
+
     let cart = req.cookies.cart;
     if (!Array.isArray(cart)) cart = [];
 
-    // Normalize cart
     cart = cart
       .map((item) => (typeof item === 'string' ? { id: item, qty: 1 } : item))
       .filter((x) => x && x.id);
 
     if (cart.length === 0) {
-      req.flash('danger', 'Cart is empty.');
+      req.flash('danger', 'Your session has expired or the cart is empty.');
       return res.redirect('/cart');
     }
 
-    // 3. Fetch Products and Validate Stock
     const ids = cart.map((item) => item.id);
     const products = await Product.find({ _id: { $in: ids } });
 
     const orderItems = [];
-    let totalAmount = 0;
+    let serverRecalculatedTotal = 0;
 
     for (const p of products) {
-      // Fix: qtyMap is an object, use bracket notation
       const itemInCart = cart.find((c) => String(c.id) === String(p._id));
       const requestedQty = itemInCart ? Number(itemInCart.qty) : 0;
-      const available = Number(p.quantity || 0);
+      const availableStock = Number(p.quantity || 0);
 
       if (requestedQty <= 0) continue;
 
-      if (available < requestedQty) {
+      if (availableStock < requestedQty) {
         req.flash(
           'danger',
-          `Not enough stock for "${p.name}". Available: ${available}`
+          `Inventory error: "${p.name}" only has ${availableStock} units left.`
         );
         return res.redirect('/cart');
       }
 
       const unitPrice = Number(p.price || 0);
-      totalAmount += unitPrice * requestedQty;
+
+      serverRecalculatedTotal += unitPrice * requestedQty;
 
       orderItems.push({
         product: p._id,
@@ -265,30 +270,31 @@ router.post('/checkout', checkCartNotEmpty, async function (req, res) {
       });
     }
 
-    // 4. Create Order (Using Lab Requirements: Name, Email, Status)
+    if (orderItems.length === 0) {
+      req.flash('danger', 'Items in your cart are no longer available.');
+      return res.redirect('/cart');
+    }
+
     const order = await Order.create({
-      customerName,
-      customerEmail,
+      customerName: customerName.trim(),
+      customerEmail: customerEmail.toLowerCase().trim(),
       items: orderItems,
-      totalAmount,
-      status: 'Pending', // Lab Requirement: Capitalized 'Pending'
+      totalAmount: serverRecalculatedTotal,
+      status: 'Pending',
     });
 
-    // 5. Reduce Stock
     for (const item of orderItems) {
       await Product.findByIdAndUpdate(item.product, {
         $inc: { quantity: -item.qty },
       });
     }
 
-    // 6. Clear Cart (Lab Requirement)
     res.clearCookie('cart');
 
-    // 7. Redirect to Confirmation (Lab Requirement: Display Order ID)
     return res.render('site/confirmation', { orderId: order._id });
   } catch (err) {
     console.error('Checkout error:', err);
-    req.flash('danger', 'Checkout failed.');
+    req.flash('danger', 'An internal error occurred during checkout.');
     return res.redirect('/cart');
   }
 });
