@@ -1,0 +1,129 @@
+<div class="container py-5">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Super Admin Dashboard</h1>
+      <p class="text-muted small">
+        Overview of your store's current performance.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card stat-card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="stat-icon bg-primary-soft text-primary">
+              <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+            <span class="badge bg-success-soft text-success small">+12%</span>
+          </div>
+          <div
+            class="text-uppercase small fw-bold text-muted mb-1 tracking-wider"
+          >
+            Total Orders
+          </div>
+          <div class="display-6 fw-bold text-dark"><%= totalOrders || 0 %></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card stat-card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="stat-icon bg-info-soft text-info">
+              <i class="fa-solid fa-box-open"></i>
+            </div>
+            <span class="text-muted small">Live Store</span>
+          </div>
+          <div
+            class="text-uppercase small fw-bold text-muted mb-1 tracking-wider"
+          >
+            Inventory Items
+          </div>
+          <div class="display-6 fw-bold text-dark">
+            <%= totalProducts || 0 %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card stat-card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="stat-icon bg-warning-soft text-warning">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <span class="badge bg-primary-soft text-primary small">Active</span>
+          </div>
+          <div
+            class="text-uppercase small fw-bold text-muted mb-1 tracking-wider"
+          >
+            Total Customers
+          </div>
+          <div class="display-6 fw-bold text-dark">
+            <%= totalCustomers || 0 %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Dashboard specific colors */
+  :root {
+    --primary-soft: rgba(59, 130, 246, 0.1);
+    --info-soft: rgba(6, 182, 212, 0.1);
+    --warning-soft: rgba(245, 158, 11, 0.1);
+    --success-soft: rgba(16, 185, 129, 0.1);
+  }
+
+  .tracking-wider {
+    letter-spacing: 0.05em;
+  }
+
+  .stat-card {
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    border-radius: 1rem;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.25rem;
+  }
+
+  /* Soft Background helpers */
+  .bg-primary-soft {
+    background-color: var(--primary-soft);
+  }
+  .bg-info-soft {
+    background-color: var(--info-soft);
+  }
+  .bg-warning-soft {
+    background-color: var(--warning-soft);
+  }
+  .bg-success-soft {
+    background-color: var(--success-soft);
+  }
+
+  .btn-white {
+    background-color: #fff;
+    color: #334155;
+    font-weight: 500;
+  }
+</style>

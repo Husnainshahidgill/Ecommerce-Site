@@ -1,0 +1,120 @@
+<style>
+  :root { --brand-dark: #1a1a1a; }
+  .page-wrap { padding-top: 2rem; padding-bottom: 4rem; }
+
+  /* Product Card Styling */
+  .product-link { color: inherit; text-decoration: none; display: block; }
+  .product-tile {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: .5rem;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: opacity 0.2s ease;
+    background: #fff;
+  }
+  .product-link:hover .product-tile { opacity: 0.8; }
+  .product-info { padding-top: 10px; }
+  .product-color { font-size: 0.85rem; color: #6c757d; text-transform: capitalize; }
+  .product-price { font-size: 0.95rem; font-weight: 700; margin-top: 2px; }
+
+  /* Sidebar/Filters Styling */
+  .filter-section { position: sticky; top: 20px; }
+  .form-label { font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Pagination Bottom Styling */
+  .pagination .page-link { color: var(--brand-dark); border: none; margin: 0 3px; border-radius: 4px; }
+  .pagination .active .page-link { background-color: var(--brand-dark); border-color: var(--brand-dark); }
+</style>
+
+<div class="container page-wrap">
+  <header class="mb-5">
+    <h1 class="display-6 fw-bold m-0"><%= pagetitle %></h1>
+    <p class="text-muted small">Showing page <%= page %> of <%= totalPages %></p>
+  </header>
+
+  <div class="row">
+    <aside class="col-md-3 col-lg-2 mb-4">
+      <div class="filter-section">
+        <h2 class="h6 fw-bold mb-3">Filters</h2>
+
+        <!-- ✅ Always apply filters from page 1 -->
+        <form method="GET" action="/1">
+          <div class="mb-3">
+            <label class="form-label">Department</label>
+            <select name="dept" class="form-select form-select-sm">
+              <option value="">All</option>
+              <% (departments || []).forEach(function(d) { %>
+                <option value="<%= d %>" <%= (filters && filters.dept === d) ? "selected" : "" %>><%= d %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Price Range</label>
+            <div class="d-flex gap-2">
+              <input type="number" name="min" class="form-control form-control-sm" value="<%= (filters && filters.min) ? filters.min : '' %>" placeholder="Min" />
+              <input type="number" name="max" class="form-control form-control-sm" value="<%= (filters && filters.max) ? filters.max : '' %>" placeholder="Max" />
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-dark btn-sm">Apply Filters</button>
+            <a href="/1" class="btn btn-link btn-sm text-muted">Clear All</a>
+          </div>
+        </form>
+      </div>
+    </aside>
+
+    <main class="col-md-9 col-lg-10">
+      <% if (!products || products.length === 0) { %>
+        <div class="text-center py-5">
+          <p class="text-muted">No products found in this category.</p>
+        </div>
+      <% } else { %>
+
+        <div class="row g-4">
+          <% for (let i = 0; i < products.length; i++) {
+               const p = products[i];
+               const imgSrc = p.image ? ("/images/uploaded/" + p.image) : "/images/placeholder.png";
+          %>
+            <div class="col-6 col-lg-4 col-xl-3">
+              <a href="/product/<%= p._id %>" class="product-link">
+                <img
+                  src="<%= imgSrc %>"
+                  alt="<%= p.name %>"
+                  class="product-tile"
+                  loading="lazy"
+                />
+                <div class="product-info">
+                  <div class="product-color"><%= p.color || 'Multi' %></div>
+                  <div class="product-price">$<%= p.price %></div>
+                </div>
+              </a>
+            </div>
+          <% } %>
+        </div>
+
+        <nav aria-label="Product pages" class="mt-5 d-flex justify-content-center">
+          <ul class="pagination">
+            <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+              <a class="page-link" href="/<%= page > 1 ? page - 1 : 1 %><%= qs ? ('?' + qs) : '' %>">&laquo;</a>
+            </li>
+
+            <% for (let index = 0; index < totalPages; index++) { %>
+              <li class="page-item <%= page === (index + 1) ? 'active' : '' %>">
+                <a class="page-link" href="/<%= index + 1 %><%= qs ? ('?' + qs) : '' %>"><%= index + 1 %></a>
+              </li>
+            <% } %>
+
+            <li class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+              <a class="page-link" href="/<%= page < totalPages ? page + 1 : totalPages %><%= qs ? ('?' + qs) : '' %>">&raquo;</a>
+            </li>
+          </ul>
+        </nav>
+
+      <% } %>
+    </main>
+  </div>
+</div>

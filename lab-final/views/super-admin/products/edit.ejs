@@ -1,0 +1,212 @@
+<style>
+  /* 1. Layout & Card */
+  .dashboard-card {
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+    background: #fff;
+  }
+
+  /* 2. Refined Labels & Section Headers */
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #f1f5f9;
+  }
+
+  .form-label {
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.6rem;
+  }
+
+  /* 3. Input Styling */
+  .form-control, .form-select {
+    border: 1px solid #eaecf0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+    outline: none;
+  }
+
+  /* 4. Media Management Box */
+  .image-preview-box {
+    background-color: #f9fafb;
+    border: 1px solid #eaecf0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .current-img {
+    max-height: 180px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 12px;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    margin-bottom: 12px;
+  }
+
+  /* 5. Buttons */
+  .btn-save {
+    background-color: #1a1a1a;
+    border: none;
+    color: #fff;
+    padding: 0.75rem 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+  .btn-save:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .btn-cancel {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+  }
+</style>
+
+<div class="container py-5">
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-10">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h1 class="h2 fw-bold mb-1">Edit Product</h1>
+          <p class="text-muted small mb-0">Modifying: <span class="text-dark fw-bold"><%= product.name %></span></p>
+        </div>
+        <a href="/super-admin/products" class="btn btn-outline-dark btn-sm px-3 rounded-pill fw-bold" style="font-size: 0.75rem;">
+          <i class="bi bi-x-lg me-1"></i> Discard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card dashboard-card border-0">
+        <div class="card-body p-4 p-md-5">
+          <form action="/super-admin/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data">
+
+            <div class="section-title mb-4">General Information</div>
+
+            <div class="row g-4 mb-5">
+              <div class="col-md-7">
+                <label class="form-label">Product Name</label>
+                <input type="text" name="name" class="form-control" value="<%= product.name %>" required placeholder="e.g. Leather Jacket">
+              </div>
+
+              <div class="col-md-5">
+                <label class="form-label">Category / Department</label>
+                <select name="department" class="form-select">
+                  <option value="<%= product.department %>" selected><%= product.department %> (Current)</option>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                  <option value="Accessories">Accessories</option>
+                  <option value="Electronics">Electronics</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Price ($)</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0 text-muted">$</span>
+                  <input type="number" step="0.01" name="price" class="form-control border-start-0 ps-0" value="<%= product.price %>" required>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Stock Quantity</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-box-seam"></i></span>
+                  <input type="number" name="quantity" class="form-control border-start-0 ps-0" min="0" value="<%= (product.quantity || 0) %>" required>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Color Variant</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-palette"></i></span>
+                  <input type="text" name="color" class="form-control border-start-0 ps-0" value="<%= product.color %>">
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="5"><%= product.description %></textarea>
+              </div>
+            </div>
+
+            <div class="section-title mb-4">Media Management</div>
+
+            <div class="row align-items-center g-4">
+              <div class="col-md-4">
+                <div class="image-preview-box">
+                  <p class="small text-muted text-uppercase fw-bold mb-3" style="font-size: 0.65rem;">Active Visual</p>
+                  <% if (product.image) { %>
+                    <img src="/images/uploaded/<%= product.image %>" alt="Current Image" class="current-img">
+                  <% } else { %>
+                    <div class="py-4 opacity-25">
+                      <i class="bi bi-image fs-1"></i>
+                      <p class="small mb-0 mt-2">No Visual Data</p>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="col-md-8">
+                <div class="p-4 border rounded-4 bg-light bg-opacity-50">
+                  <label class="form-label">Replace Photography</label>
+                  <input type="file" name="image" class="form-control bg-white" accept="image/*">
+                  <div class="form-text mt-3">
+                    <i class="bi bi-info-circle-fill me-1"></i>
+                    Uploading a new file will permanently overwrite the current product image. Best size: 1000x1000px.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-5 opacity-5">
+
+            <div class="d-flex justify-content-end align-items-center gap-3">
+              <a href="/super-admin/products" class="btn btn-light btn-cancel border text-muted">Discard Changes</a>
+              <button type="submit" class="btn btn-save shadow-sm">
+                Update Product
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

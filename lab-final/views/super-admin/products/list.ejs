@@ -1,0 +1,200 @@
+<style>
+  /* 1. Card & Layout Refinement */
+  .dashboard-card {
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  /* 2. Header Styling - High Contrast */
+  .table-custom thead th {
+    background-color: #fcfcfd;
+    color: #475467;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #f2f4f7;
+    padding: 1.25rem 1rem;
+  }
+
+  /* 3. Table Body */
+  .table-custom tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid #f2f4f7;
+    color: #1a1a1a;
+    font-size: 0.9rem;
+  }
+
+  /* 4. Product Image styling */
+  .img-wrapper {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #eee;
+  }
+  .product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* 5. Modern Badges */
+  .badge-dept {
+    background-color: #f9f5ff;
+    color: #6941c0;
+    border: 1px solid #e9d7fe;
+    border-radius: 6px;
+    padding: 0.35em 0.65em;
+    font-weight: 500;
+  }
+
+  /* 6. Action Buttons - Minimalist */
+  .btn-action {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid #eaecf0;
+    background: #fff;
+    color: #667085;
+    transition: all 0.2s;
+  }
+  .btn-action:hover {
+    background: #f9fafb;
+    color: #1a1a1a;
+    border-color: #d0d5dd;
+  }
+  .btn-delete:hover {
+    background: #fef3f2;
+    color: #d92d20;
+    border-color: #fda29b;
+  }
+
+  /* 7. Typography */
+  .product-name { font-weight: 600; color: #101828; }
+  .price-tag { font-weight: 700; color: #101828; }
+  .description-muted {
+    font-size: 0.8rem;
+    color: #667085;
+    max-width: 200px;
+    display: block;
+  }
+</style>
+
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Inventory Management</h2>
+      <p class="text-muted small mb-0">Manage your product catalog and stock levels.</p>
+    </div>
+    <a href="/super-admin/products/create" class="btn btn-dark shadow-sm px-4 py-2 rounded-3 fw-bold">
+      <i class="bi bi-plus-lg me-2"></i>New Product
+    </a>
+  </div>
+
+  <div class="card dashboard-card">
+    <div class="table-responsive">
+      <table class="table table-custom table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="ps-4">Product Details</th>
+            <th>Category</th>
+            <th>Inventory</th>
+            <th>Price</th>
+            <th>Summary</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% products.forEach(product => { %>
+            <tr>
+              <td class="ps-4">
+                <div class="d-flex align-items-center">
+                  <div class="img-wrapper me-3">
+                    <% if (product.image) { %>
+                      <img src="/images/uploaded/<%= product.image %>" class="product-img" alt="<%= product.name %>">
+                    <% } else { %>
+                      <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                        <i class="bi bi-image text-muted"></i>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div>
+                    <span class="product-name d-block"><%= product.name %></span>
+                    <span class="text-muted small">ID: <%= product._id.toString().substring(0,8) %></span>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <span class="badge-dept small">
+                  <%= product.department || 'General' %>
+                </span>
+              </td>
+
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="me-2">
+                    <% const stock = product.quantity || 0; %>
+                    <span class="fw-bold <%= stock < 5 ? 'text-danger' : '' %>"><%= stock %></span>
+                    <span class="text-muted small">pcs</span>
+                  </div>
+                  <div style="width: 8px; height: 8px; border-radius: 50%; background: <%= (product.color || '#ddd').toLowerCase() %>; border: 1px solid rgba(0,0,0,0.1);" title="<%= product.color %>"></div>
+                </div>
+              </td>
+
+              <td class="price-tag text-nowrap">$<%= product.price %></td>
+
+              <td class="description-cell">
+                <span class="description-muted text-truncate" title="<%= product.description %>">
+                  <%= product.description %>
+                </span>
+              </td>
+
+              <td class="text-end pe-4">
+                <div class="d-flex justify-content-end gap-2">
+                  <a href="/super-admin/products/edit/<%= product._id %>" class="btn-action" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                <form action="/super-admin/products/delete/<%= product._id %>"
+      method="POST"
+      style="display:inline;"
+      onsubmit="return confirm('Archive this product?')">
+  <button type="submit" class="btn-action btn-delete" title="Delete">
+    <i class="bi bi-trash"></i>
+  </button>
+</form>
+
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+
+          <% if (products.length === 0) { %>
+            <tr>
+              <td colspan="6" class="text-center py-5">
+                <div class="py-4">
+                  <i class="bi bi-search display-1 text-light mb-3 d-block"></i>
+                  <p class="text-muted fw-medium">Your inventory is empty.</p>
+                  <a href="/super-admin/products/create" class="btn btn-sm btn-outline-dark">Add your first product</a>
+                </div>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="bg-light bg-opacity-50 p-3 border-top text-center">
+      <span class="small text-muted">Showing <strong><%= products.length %></strong> products in total</span>
+    </div>
+  </div>
+</div>

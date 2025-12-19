@@ -1,0 +1,105 @@
+<style>
+  .back-link { color: #6c757d; text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .back-link:hover { color: #2d2828; }
+
+  .product-img-container { background-color: #f8f9fa; border-radius: 12px; overflow: hidden; }
+  .main-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; mix-blend-mode: multiply; }
+
+  .product-dept { text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: #6c757d; margin-bottom: 0.5rem; }
+  .product-price { font-size: 1.5rem; font-weight: 600; margin: 1.5rem 0; }
+  .detail-label { font-weight: 600; width: 100px; display: inline-block; font-size: 0.9rem; }
+  .detail-value { color: #495057; font-size: 0.9rem; }
+
+  .qty-input { border: 1px solid #dee2e6; border-radius: 4px; text-align: center; font-weight: 600; }
+  .btn-add-to-cart {
+    background-color: #1a1a1a; color: #fff; border: none;
+    padding: 0.8rem 2rem; font-weight: 600; border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  .btn-add-to-cart:hover { background-color: #333; color: #fff; }
+  .btn-out-of-stock { padding: 0.8rem 2rem; border-radius: 4px; }
+</style>
+
+<%
+  const available = (product && product.quantity != null) ? Number(product.quantity) : 0;
+
+  const dept = (product && product.department) ? product.department : 'General';
+  const color = (product && product.color) ? product.color : 'N/A';
+  const desc = (product && product.description) ? product.description : 'No description available.';
+
+  const imgSrc = (product && product.image) ? ("/images/uploaded/" + product.image) : "/images/placeholder.png";
+%>
+
+<div class="container py-5">
+  <nav class="mb-4">
+    <a href="/" class="back-link">&larr; Back to Catalog</a>
+  </nav>
+
+  <div class="row g-5">
+    <div class="col-12 col-md-6 col-lg-7">
+      <div class="product-img-container border">
+        <img
+          src="<%= imgSrc %>"
+          alt="<%= product ? product.name : 'Product' %>"
+          class="main-img"
+          loading="lazy"
+        />
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-5">
+      <div class="product-dept"><%= dept %></div>
+      <h1 class="display-6 fw-bold mb-3"><%= product ? product.name : 'Unknown Product' %></h1>
+
+      <div class="product-price">$<%= product ? product.price : '0' %></div>
+
+      <p class="text-secondary mb-4" style="line-height: 1.6;">
+        <%= desc %>
+      </p>
+
+      <hr class="my-4 text-muted opacity-25">
+
+      <div class="mb-4">
+        <div class="mb-2">
+          <span class="detail-label">Color</span>
+          <span class="detail-value text-capitalize"><%= color %></span>
+        </div>
+        <div class="mb-2">
+          <span class="detail-label">Availability</span>
+          <span class="detail-value">
+            <%= (available > 0) ? (available + ' in stock') : 'Unavailable' %>
+          </span>
+        </div>
+      </div>
+
+      <% if (available <= 0) { %>
+        <button class="btn btn-secondary w-100 btn-out-of-stock" disabled>Sold Out</button>
+      <% } else { %>
+        <form method="POST" action="/add-cart/<%= product._id %>">
+          <div class="row g-2 align-items-end">
+            <div class="col-3">
+              <label class="form-label small fw-bold">Quantity</label>
+              <input
+                type="number"
+                name="qty"
+                class="form-control qty-input"
+                min="1"
+                max="<%= available %>"
+                value="1"
+                required
+              />
+            </div>
+            <div class="col-9">
+              <button type="submit" class="btn btn-add-to-cart w-100">
+                Add To Cart
+              </button>
+            </div>
+          </div>
+          <p class="text-muted small mt-3">
+            Free shipping on orders over $100.
+          </p>
+        </form>
+      <% } %>
+    </div>
+  </div>
+</div>

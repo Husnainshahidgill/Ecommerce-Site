@@ -1,0 +1,259 @@
+<style>
+  /* 1. Layout & Card */
+  .dashboard-card {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
+    background: #fff;
+  }
+
+  /* 2. Refined Labels & Typography */
+  .form-label {
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.6rem;
+  }
+
+  /* 3. Input Styling */
+  .input-group-text {
+    background-color: #fcfcfd;
+    border-color: #eaecf0;
+    color: #667085;
+  }
+
+  .form-control {
+    border: 1px solid #eaecf0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    background-color: #fff;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus {
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+    background-color: #fff;
+  }
+
+  /* 4. Custom File Upload Area */
+  .upload-area {
+    border: 2px dashed #eaecf0;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .upload-area:hover {
+    border-color: #1a1a1a;
+    background-color: #fff;
+  }
+
+  /* 5. Action Button */
+  .btn-create {
+    background-color: #1a1a1a;
+    border: none;
+    color: #fff;
+    padding: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+  .btn-create:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-back {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+  }
+</style>
+
+<div class="container py-5">
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-9">
+      <div class="d-flex align-items-end justify-content-between">
+        <div>
+          <h1 class="h2 fw-bold mb-1">New Product</h1>
+          <p class="text-muted small mb-0">
+            Fill in the details below to list a new item.
+          </p>
+        </div>
+        <a
+          href="/super-admin/products"
+          class="btn btn-outline-dark btn-sm btn-back px-3"
+        >
+          <i class="bi bi-arrow-left me-1"></i> Back to Catalog
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <div class="card dashboard-card border-0">
+        <div class="card-body p-4 p-md-5">
+          <form
+            action="/super-admin/products/create"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <div class="row g-4 mb-4">
+              <div class="col-md-8">
+                <label for="name" class="form-label"
+                  >Product Title <span class="text-danger">*</span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-type"></i
+                  ></span>
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    class="form-control"
+                    placeholder="Enter product name"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label for="price" class="form-label"
+                  >Price ($) <span class="text-danger">*</span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text fw-bold">$</span>
+                  <input
+                    type="number"
+                    name="price"
+                    id="price"
+                    class="form-control"
+                    placeholder="0.00"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+              <div class="col-md-4">
+                <label for="department" class="form-label">Department</label>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-grid"></i
+                  ></span>
+                  <input
+                    type="text"
+                    name="department"
+                    id="department"
+                    class="form-control"
+                    placeholder="Electronics, Home..."
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label for="color" class="form-label">Color Variant</label>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-palette"></i
+                  ></span>
+                  <input
+                    type="text"
+                    name="color"
+                    id="color"
+                    class="form-control"
+                    placeholder="e.g. Navy Blue"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label for="quantity" class="form-label"
+                  >Stock Quantity <span class="text-danger">*</span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-hash"></i
+                  ></span>
+                  <input
+                    type="number"
+                    name="quantity"
+                    id="quantity"
+                    class="form-control"
+                    placeholder="0"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="description" class="form-label"
+                >Detailed Description</label
+              >
+              <textarea
+                name="description"
+                id="description"
+                class="form-control"
+                rows="5"
+                placeholder="Write a few sentences about the product features..."
+              ></textarea>
+            </div>
+
+            <div class="mb-5">
+              <label class="form-label">Product Photography</label>
+              <div class="upload-area text-center position-relative">
+                <i class="bi bi-image display-4 text-muted mb-3 d-block"></i>
+                <h6 class="fw-bold mb-1">Click to upload or drag and drop</h6>
+                <p class="text-muted small">PNG, JPG or WEBP (Max. 2MB)</p>
+                <input
+                  type="file"
+                  name="image"
+                  id="image"
+                  class="form-control position-absolute top-0 start-0 h-100 w-100 opacity-0 cursor-pointer"
+                  accept="image/*"
+                  required
+                />
+                <div
+                  id="file-name-display"
+                  class="mt-2 fw-bold text-dark small"
+                ></div>
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-create shadow-sm">
+                Publish Product
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple script to show selected file name
+  document.getElementById('image').addEventListener('change', function (e) {
+    const fileName = e.target.files[0] ? e.target.files[0].name : '';
+    document.getElementById('file-name-display').textContent = fileName
+      ? 'Selected: ' + fileName
+      : '';
+  });
+</script>
