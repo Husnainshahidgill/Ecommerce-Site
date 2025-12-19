@@ -207,6 +207,14 @@ router.get('/checkout', checkCartNotEmpty, async function (req, res) {
   return res.render('site/checkout', { items, total });
 });
 
+/* ROUTE: POST /checkout
+  Objective: Transition transient cart data into a persistent database Order.
+  Logic: 
+  1. Recalculates total on the server to prevent price tampering.
+  2. Updates Product inventory using $inc to ensure stock is reduced.
+  3. Clears the user's session/cookie cart only AFTER the order is successfully saved.
+*/
+
 router.post('/checkout', checkCartNotEmpty, async function (req, res) {
   try {
     const { customerName, customerEmail } = req.body;
@@ -308,66 +316,85 @@ router.get('/categories', async function (req, res, next) {
   });
 });
 
+/* ROUTE: GET /:page?
+  DESCRIPTION: This is the main shop landing page. It handles three complex features:
+  1. Pagination: Using 'skip' and 'limit' to show only 12 products at a time.
+  2. Dynamic Filtering: Filtering by department and price range using MongoDB Aggregation.
+  3. Price Conversion: Converting string prices to doubles on-the-fly for accurate numerical filtering.
+*/
 router.get('/:page?', async function (req, res, next) {
-  let page = Number(req.params.page);
+  // Task 5 Fix: Wrapped in try-catch to handle async database errors gracefully
+  try {
+    let page = Number(req.params.page);
+    if (!page || page < 1) page = 1;
 
-  if (!page || page < 1) page = 1;
+    const pageSize = 12;
+    const skip = (page - 1) * pageSize;
 
-  const pageSize = 12;
+    // Sanitize query parameters for filtering
+    const dept = (req.query.dept || '').trim();
+    const min = req.query.min ? Number(req.query.min) : null;
+    const max = req.query.max ? Number(req.query.max) : null;
 
-  const skip = (page - 1) * pageSize;
+    // Fetch unique departments for the sidebar filter
+    const departments = await Product.distinct('department');
 
-  const dept = (req.query.dept || '').trim();
-  const min = req.query.min ? Number(req.query.min) : null;
-  const max = req.query.max ? Number(req.query.max) : null;
+    // Build query object to persist filter state in pagination links (QueryString)
+    const queryObj = {};
+    if (dept) queryObj.dept = dept;
+    if (min !== null && !Number.isNaN(min)) queryObj.min = String(min);
+    if (max !== null && !Number.isNaN(max)) queryObj.max = String(max);
+    const qs = new URLSearchParams(queryObj).toString();
 
-  const departments = await Product.distinct('department');
+    // Construct the MongoDB Match object for the Aggregation Pipeline
+    const match = {};
+    if (dept) match.department = dept;
 
-  // keep filters in pagination links
-  const queryObj = {};
-  if (dept) queryObj.dept = dept;
-  if (min !== null && !Number.isNaN(min)) queryObj.min = String(min);
-  if (max !== null && !Number.isNaN(max)) queryObj.max = String(max);
-  const qs = new URLSearchParams(queryObj).toString();
+    if (min !== null || max !== null) {
+      match.priceNum = {};
+      if (min !== null && !Number.isNaN(min)) match.priceNum.$gte = min;
+      if (max !== null && !Number.isNaN(max)) match.priceNum.$lte = max;
+    }
 
-  // build match for aggregation
-  const match = {};
-  if (dept) match.department = dept;
+    /* Why Aggregation? 
+       We use $addFields to convert the 'price' string to a double ($toDouble)
+       so we can perform mathematical comparisons (greater than/less than) 
+       which wouldn't work correctly on string data.
+    */
+    const products = await Product.aggregate([
+      { $addFields: { priceNum: { $toDouble: '$price' } } },
+      { $match: match },
+      { $skip: skip },
+      { $limit: pageSize },
+    ]);
 
-  if (min !== null || max !== null) {
-    match.priceNum = {};
-    if (min !== null && !Number.isNaN(min)) match.priceNum.$gte = min;
-    if (max !== null && !Number.isNaN(max)) match.priceNum.$lte = max;
+    // Count total filtered products to calculate total pages for the UI
+    const countArr = await Product.aggregate([
+      { $addFields: { priceNum: { $toDouble: '$price' } } },
+      { $match: match },
+      { $count: 'total' },
+    ]);
+
+    const totalProducts = countArr[0]?.total || 0;
+    const totalPages = Math.max(1, Math.ceil(totalProducts / pageSize));
+
+    return res.render('site/homepage', {
+      pagetitle: 'Awesome Products',
+      products,
+      page,
+      pageSize,
+      totalPages,
+      departments,
+      filters: { dept, min: min ?? '', max: max ?? '' },
+      qs,
+    });
+  } catch (err) {
+    // Task 5: Meaningful Debugging
+    console.error('Error in Shop Main Route:', err);
+    res
+      .status(500)
+      .send('Internal Server Error: Unable to load products at this time.');
   }
-
-  const products = await Product.aggregate([
-    { $addFields: { priceNum: { $toDouble: '$price' } } },
-    { $match: match },
-    { $skip: skip },
-    { $limit: pageSize },
-  ]);
-
-  const countArr = await Product.aggregate([
-    { $addFields: { priceNum: { $toDouble: '$price' } } },
-    { $match: match },
-    { $count: 'total' },
-  ]);
-
-  const totalProducts = countArr[0]?.total || 0;
-
-  //makes pages for the last 2 products
-  const totalPages = Math.max(1, Math.ceil(totalProducts / pageSize));
-
-  return res.render('site/homepage', {
-    pagetitle: 'Awesome Products',
-    products,
-    page,
-    pageSize,
-    totalPages,
-    departments,
-    filters: { dept, min: min ?? '', max: max ?? '' },
-    qs,
-  });
 });
 
 module.exports = router;
