@@ -8,10 +8,8 @@ router.get('/', async (req, res) => {
   try {
     const [totalProducts, totalCustomers, totalOrders] = await Promise.all([
       Product.countDocuments(),
-      User.countDocuments({
-        roles: 'customer',
-        roles: { $nin: ['admin', 'super-admin'] },
-      }),
+
+      User.countDocuments({ roles: { $nin: ['admin', 'super-admin'] } }),
       Order.countDocuments(),
     ]);
 

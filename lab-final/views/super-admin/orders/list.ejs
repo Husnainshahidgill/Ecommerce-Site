@@ -1,0 +1,61 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <h2 class="fw-bold mb-1">Order Management</h2>
+    <p class="text-muted small mb-0">View and manage customer orders.</p>
+  </div>
+
+  <div class="card dashboard-card">
+    <div class="table-responsive">
+      <table class="table table-custom table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="ps-4">Order ID</th>
+            <th>Customer</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach(order => { %>
+            <tr>
+              <td class="ps-4 font-monospace small"><%= order._id %></td>
+              <td>
+                <div class="fw-bold text-dark"><%= order.customerName %></div>
+                <div class="text-muted small"><%= order.customerEmail %></div>
+              </td>
+              <td class="price-tag text-primary">$<%= order.totalAmount.toFixed(2) %></td>
+              <td>
+                <% 
+                   let badgeClass = 'bg-secondary';
+                   if(order.status === 'Confirmed') badgeClass = 'bg-success';
+                   if(order.status === 'Cancelled') badgeClass = 'bg-danger';
+                   if(order.status === 'Pending') badgeClass = 'bg-warning text-dark';
+                %>
+                <span class="badge <%= badgeClass %>"><%= order.status %></span>
+              </td>
+              <td class="small text-muted">
+                <%= new Date(order.createdDate).toLocaleDateString() %>
+              </td>
+              <td class="text-end pe-4">
+                <div class="d-flex justify-content-end gap-2">
+                  <% if(order.status === 'Pending') { %>
+                    <form action="/super-admin/orders/confirm/<%= order._id %>" method="POST">
+                      <button class="btn btn-sm btn-outline-success">Confirm</button>
+                    </form>
+                    <form action="/super-admin/orders/cancel/<%= order._id %>" method="POST">
+                      <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                    </form>
+                  <% } else { %>
+                    <span class="text-muted small italic">Finalized</span>
+                  <% } %>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

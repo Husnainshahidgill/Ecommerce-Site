@@ -49,6 +49,12 @@ app.use(
   require('./routes/super-admin/products')
 );
 
+app.use(
+  '/super-admin',
+  superAdminMiddleware,
+  require('./routes/super-admin/orders')
+);
+
 app.use('/api/public/products', require('./routes/api/public/products'));
 
 app.use('/api/categories', apiauth, require('./routes/api/catagories'));

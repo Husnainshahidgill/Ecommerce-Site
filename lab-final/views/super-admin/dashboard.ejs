@@ -10,7 +10,7 @@
 
   <div class="row g-4">
     <div class="col-md-4">
-      <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card stat-card border-0 shadow-sm h-100 position-relative">
         <div class="card-body p-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="stat-icon bg-primary-soft text-primary">
@@ -24,6 +24,15 @@
             Total Orders
           </div>
           <div class="display-6 fw-bold text-dark"><%= totalOrders || 0 %></div>
+
+          <a
+            href="/super-admin/orders"
+            class="stretched-link text-decoration-none"
+          >
+            <div class="text-primary small mt-3 fw-semibold">
+              View Details <i class="fa-solid fa-arrow-right ms-1"></i>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -73,12 +82,18 @@
 </div>
 
 <style>
-  /* Dashboard specific colors */
   :root {
     --primary-soft: rgba(59, 130, 246, 0.1);
     --info-soft: rgba(6, 182, 212, 0.1);
     --warning-soft: rgba(245, 158, 11, 0.1);
     --success-soft: rgba(16, 185, 129, 0.1);
+  }
+
+  /* Fix to make the anchor tag fill the entire card space */
+  .dashboard-link {
+    text-decoration: none !important;
+    display: block;
+    height: 100%;
   }
 
   .tracking-wider {
@@ -90,6 +105,7 @@
       transform 0.2s ease,
       box-shadow 0.2s ease;
     border-radius: 1rem;
+    cursor: pointer; /* Ensures the hand cursor appears over the whole card */
   }
 
   .stat-card:hover {
@@ -107,7 +123,6 @@
     font-size: 1.25rem;
   }
 
-  /* Soft Background helpers */
   .bg-primary-soft {
     background-color: var(--primary-soft);
   }
