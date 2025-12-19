@@ -3,6 +3,7 @@ var router = express.Router();
 var Product = require('../models/Product');
 const Category = require('../models/Category');
 const Order = require('../models/Order');
+const { checkCartNotEmpty } = require('../middlewares/cartAuth');
 
 router.get('/cart', async function (req, res, next) {
   let cart = req.cookies.cart; //cookies to store cart
@@ -154,7 +155,7 @@ router.post('/cart/remove/:id', function (req, res) {
   return res.redirect('/cart');
 });
 
-router.get('/checkout', async function (req, res) {
+router.get('/checkout', checkCartNotEmpty, async function (req, res) {
   let cart = req.cookies.cart;
   if (!Array.isArray(cart)) cart = [];
 
@@ -206,7 +207,7 @@ router.get('/checkout', async function (req, res) {
   return res.render('site/checkout', { items, total });
 });
 
-router.post('/checkout', async function (req, res) {
+router.post('/checkout', checkCartNotEmpty, async function (req, res) {
   try {
     // 1. Get Customer details from the form (Lab Requirement)
     const { customerName, customerEmail } = req.body;

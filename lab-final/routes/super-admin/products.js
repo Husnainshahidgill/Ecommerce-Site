@@ -4,6 +4,8 @@ let router = express.Router();
 const multer = require('multer');
 const path = require('path');
 
+const { adminOnly } = require('../../middlewares/cartAuth');
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/images/uploaded');
@@ -18,7 +20,6 @@ router.get('/products/create', (req, res) => {
   res.render('super-admin/products/create');
 });
 
-// POST - handle form submission
 router.post('/products/create', upload.single('image'), async (req, res) => {
   try {
     const { name, price, color, department, description, quantity } = req.body;

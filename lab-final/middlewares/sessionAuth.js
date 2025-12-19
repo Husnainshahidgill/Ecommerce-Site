@@ -5,13 +5,10 @@ async function sessionAuth(req, res, next) {
   //if user is logged in, make user data available in all views
   res.locals.user = req.session.user;
 
-  // ✅ safe roles array
   const roles = req.session.user?.roles || [];
 
-  // ✅ superadmin flag
   res.locals.isSuperAdmin = roles.includes('superadmin');
 
-  // ✅ admin flag should include superadmin too
   // This establishes a hierarchy: If you are a Super Admin, the system automatically
   //  treats you as an Admin too.
   res.locals.isAdmin = roles.includes('admin') || res.locals.isSuperAdmin;
