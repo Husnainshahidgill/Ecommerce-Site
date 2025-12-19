@@ -7,28 +7,24 @@ const orderItemSchema = new mongoose.Schema(
       ref: 'Product',
       required: true,
     },
-    name: { type: String, default: '' }, // snapshot (optional but useful)
-    price: { type: Number, default: 0 }, // snapshot
+    name: String,
+    price: Number,
     qty: { type: Number, required: true, min: 1 },
   },
   { _id: false }
 );
 
-const orderSchema = new mongoose.Schema(
-  {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-
-    items: { type: [orderItemSchema], default: [] },
-
-    total: { type: Number, default: 0 },
-
-    status: {
-      type: String,
-      enum: ['pending', 'paid', 'shipped', 'cancelled'],
-      default: 'pending',
-    },
+const orderSchema = new mongoose.Schema({
+  customerName: { type: String, required: true },
+  customerEmail: { type: String, required: true },
+  items: [orderItemSchema],
+  totalAmount: { type: Number, default: 0 },
+  status: {
+    type: String,
+    enum: ['Pending', 'Confirmed', 'Cancelled'],
+    default: 'Pending',
   },
-  { timestamps: true }
-);
+  createdDate: { type: Date, default: Date.now },
+});
 
 module.exports = mongoose.model('Order', orderSchema);

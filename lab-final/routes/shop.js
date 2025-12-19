@@ -208,52 +208,39 @@ router.get('/checkout', async function (req, res) {
 
 router.post('/checkout', async function (req, res) {
   try {
-    const user = req.session.user;
-    if (!user) {
-      req.flash('danger', 'Please login first.');
-      return res.redirect('/login');
+    // 1. Get Customer details from the form (Lab Requirement)
+    const { customerName, customerEmail } = req.body;
+
+    if (!customerName || !customerEmail) {
+      req.flash('danger', 'Please provide your name and email.');
+      return res.redirect('/checkout');
     }
 
+    // 2. Get Cart from Cookies
     let cart = req.cookies.cart;
     if (!Array.isArray(cart)) cart = [];
 
-    let cleanCart = [];
-
-    for (const item of cart) {
-      if (typeof item === 'string') {
-        cleanCart.push({ id: item, qty: 1 });
-      } else {
-        cleanCart.push(item);
-      }
-    }
-
-    cart = cleanCart;
-
-    cart = cart.filter((x) => x && x.id);
+    // Normalize cart
+    cart = cart
+      .map((item) => (typeof item === 'string' ? { id: item, qty: 1 } : item))
+      .filter((x) => x && x.id);
 
     if (cart.length === 0) {
       req.flash('danger', 'Cart is empty.');
       return res.redirect('/cart');
     }
 
-    const ids = [];
-
-    for (const item of cart) {
-      ids.push(item.id);
-    }
-
+    // 3. Fetch Products and Validate Stock
+    const ids = cart.map((item) => item.id);
     const products = await Product.find({ _id: { $in: ids } });
 
-    const qtyMap = {};
-    for (const item of cart) {
-      qtyMap[item.id] = Number(item.qty || 1);
-    }
-
     const orderItems = [];
-    let total = 0;
+    let totalAmount = 0;
 
     for (const p of products) {
-      const requestedQty = qtyMap.get(String(p._id)) || 0;
+      // Fix: qtyMap is an object, use bracket notation
+      const itemInCart = cart.find((c) => String(c.id) === String(p._id));
+      const requestedQty = itemInCart ? Number(itemInCart.qty) : 0;
       const available = Number(p.quantity || 0);
 
       if (requestedQty <= 0) continue;
@@ -267,7 +254,7 @@ router.post('/checkout', async function (req, res) {
       }
 
       const unitPrice = Number(p.price || 0);
-      total += unitPrice * requestedQty;
+      totalAmount += unitPrice * requestedQty;
 
       orderItems.push({
         product: p._id,
@@ -277,30 +264,27 @@ router.post('/checkout', async function (req, res) {
       });
     }
 
-    if (orderItems.length === 0) {
-      req.flash('danger', 'Cart is empty.');
-      return res.redirect('/cart');
-    }
-
-    // Create order
+    // 4. Create Order (Using Lab Requirements: Name, Email, Status)
     const order = await Order.create({
-      user: user._id,
+      customerName,
+      customerEmail,
       items: orderItems,
-      total,
-      status: 'pending',
+      totalAmount,
+      status: 'Pending', // Lab Requirement: Capitalized 'Pending'
     });
 
-    // Reduce stock
+    // 5. Reduce Stock
     for (const item of orderItems) {
       await Product.findByIdAndUpdate(item.product, {
         $inc: { quantity: -item.qty },
       });
     }
 
-    // Clear cart
-    res.cookie('cart', []);
-    req.flash('success', 'Order placed successfully!');
-    return res.redirect('/cart');
+    // 6. Clear Cart (Lab Requirement)
+    res.clearCookie('cart');
+
+    // 7. Redirect to Confirmation (Lab Requirement: Display Order ID)
+    return res.render('site/confirmation', { orderId: order._id });
   } catch (err) {
     console.error('Checkout error:', err);
     req.flash('danger', 'Checkout failed.');

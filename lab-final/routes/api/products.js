@@ -21,6 +21,8 @@ const storage = multer.diskStorage({
   },
 });
 
+const upload = multer({ storage: storage });
+
 // GET all products
 router.get('/', async function (req, res) {
   let products = await Product.find();
